@@ -224,3 +224,9 @@ def test_danfe_default_production(tmp_path, load_danfe):
     danfe = load_danfe("nfe_with_production_environment.xml", config=config)
     pdf_path = get_pdf_output_path("danfe", "danfe_default_production")
     assert_pdf_equal(danfe, pdf_path, tmp_path)
+
+
+def test_danfe_reforma_tributaria(tmp_path, load_danfe):
+    danfe = load_danfe("nfe_reforma_tributaria.xml")
+    pdf_path = get_pdf_output_path("danfe", "danfe_reforma_tributaria")
+    assert_pdf_equal(danfe, pdf_path, tmp_path)
