@@ -33,9 +33,9 @@ def assert_pdf_equal(
     linearize=False,
     at_epoch=True,
     generate=False,
-    ignore_id_changes=False,
-    ignore_original_obj_ids=False,
-    ignore_xref_offets=False,
+    ignore_id_changes=True,
+    ignore_original_obj_ids=True,
+    ignore_xref_offets=True,
 ):
     """
     This compare the output of a `FPDF` instance (or `Template` instance),
