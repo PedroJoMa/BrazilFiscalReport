@@ -1457,3 +1457,6 @@ class Danfe(xFPDF):
             dest_end = dest_end[:85]
             cpl_truncado = True
         return dest_end, complemento, cpl_truncado
+
+
+# inicialize
