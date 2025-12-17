@@ -22,8 +22,8 @@ class FontType(Enum):
 
 
 class FontSize(Enum):
-    SMALL = "Small"
-    BIG = "Big"
+    SMALL = 1.0
+    BIG = 1.35
 
 
 @dataclass
