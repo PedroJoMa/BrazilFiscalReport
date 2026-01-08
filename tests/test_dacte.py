@@ -138,3 +138,9 @@ def test_dacte_watermark_homologation_only(tmp_path, load_dacte):
     dacte = load_dacte("dacte_test_homolog.xml", config=dacte_config)
     pdf_path = get_pdf_output_path("dacte", "dacte_watermark_homologation_only")
     assert_pdf_equal(dacte, pdf_path, tmp_path)
+
+
+def test_dacte_reforma_tributaria(tmp_path, load_dacte):
+    dacte = load_dacte("dacte_reforma_tributaria.xml")
+    pdf_path = get_pdf_output_path("dacte", "dacte_reforma_tributaria")
+    assert_pdf_equal(dacte, pdf_path, tmp_path)
