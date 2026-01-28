@@ -66,9 +66,6 @@ class DanfeBasicField(Element):
         if self.type in ["protocolo", "chave_acesso"]:
             pdf.set_font(pdf.default_font, "B", font_size_cont)
             align = "C"
-        elif self.type in ["info_complementares"]:
-            pdf.set_font(pdf.default_font, "", pdf.get_font_size("FONT_SIZE_CONT"))
-            align = "R" if self.type == "number" else "L"
         else:
             pdf.set_font(pdf.default_font, "", font_size_cont)
             align = "R" if self.type == "number" else "L"

@@ -22,6 +22,7 @@ class FontType(Enum):
 
 
 class FontSize(Enum):
+    # Os valores a seguir são multiplicadores que ajustam o tamanho da fonte da DANFE.
     SMALL = 1.0
     BIG = 1.35
 

@@ -19,7 +19,7 @@ from ..utils import (
     merge_if_different,
 )
 from ..xfpdf import xFPDF
-from .config import DanfeConfig, InvoiceDisplay, ReceiptPosition
+from .config import DanfeConfig, FontSize, InvoiceDisplay, ReceiptPosition
 from .danfe_basic_field import DanfeBasicField
 from .danfe_block import DanfeBlock
 from .danfe_code import DanfeCode
@@ -486,6 +486,14 @@ class Danfe(xFPDF):
                     addit_data = " ".join(current_add_info_lines)
                     addit_data_next_pages = []
         return addit_data, addit_data_next_pages
+
+    def _product_col_widths(self, cst_width: float) -> tuple[float | None, ...]:
+        if self.default_font_factor is FontSize.SMALL.value:
+            return (15, None, 11, cst_width, 7, 6, 12, 13, 13, 13, 10, 10, 9, 8)
+        elif self.default_font_factor is FontSize.BIG.value:
+            return (15, None, 14, 8, 8, 8, 12, 13, 13, 14, 13, 10, 9, 8)
+
+        raise ValueError(f"Unsupported FontSize: {self.default_font_factor}")
 
     def _draw_void_watermark(self):
         """
@@ -1347,11 +1355,7 @@ class Danfe(xFPDF):
             "%IPI",
         ]
         monetary_fields_index = [6, 7, 8, 9, 10, 11, 12, 13]
-        if self.default_font_factor == 1.0:
-            col_widths = (15, None, 11, cst_width, 7, 6, 12, 13, 13, 13, 10, 10, 9, 8)
-        else:
-            col_widths = (15, None, 14, 7, 8, 8, 12, 13, 13, 14, 13, 10, 9, 8)
-
+        col_widths = self._product_col_widths(cst_width)
         defined_width = sum(filter(None, col_widths))
         none_width = self.edw - defined_width
         fixed_col_widths = tuple(w if w is not None else none_width for w in col_widths)
@@ -1481,6 +1485,3 @@ class Danfe(xFPDF):
             return base_size * self.default_font_factor
         else:
             return base_size
-
-
-# inicialize
