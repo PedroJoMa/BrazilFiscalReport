@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NFSe xmlns="http://www.sped.fazenda.gov.br/nfse">
+    <infNFSe versao="1.01" Id="NFS42046482250248250000160023000010015526023319558786">
+        <xLocEmi>São Paulo</xLocEmi>
+        <xLocPrestacao>São Paulo</xLocPrestacao>
+        <nNFSe>155</nNFSe>
+        <cLocIncid>4204608</cLocIncid>
+        <xLocIncid>São Paulo</xLocIncid>
+        <xTribNac>Serviços de limpeza, conservação e manutenção</xTribNac>
+        <verAplic>SefinNacional_1.6.0</verAplic>
+        <ambGer>2</ambGer>
+        <tpEmis>1</tpEmis>
+        <procEmi>1</procEmi>
+        <cStat>100</cStat>
+        <dhProc>2026-02-18T16:40:38-03:00</dhProc>
+        <nDFSe>7134256</nDFSe>
+        <emit>
+            <CNPJ>54285514000160</CNPJ>
+            <xNome>Benedito e Manoel Limpeza ME</xNome>
+            <enderNac>
+                <xLgr>Rua Sebastião da Silva Leite</xLgr>
+                <nro>854</nro>
+                <xBairro>Vila Rosangela</xBairro>
+                <cMun>4204608</cMun>
+                <UF>SP</UF>
+                <CEP>88804342</CEP>
+            </enderNac>
+            <fone>1837496255</fone>
+            <email>cobranca@beneditoemanoellimpezame.com.br</email>
+        </emit>
+        <valores>
+        </valores>
+        <DPS versao="1.00">
+            <infDPS Id="DPS420461824324865002016057001000012000300157">
+                <tpAmb>2</tpAmb>
+                <dhEmi>2026-02-18T16:38:36-03:00</dhEmi>
+                <verAplic>notagateway_v2.03</verAplic>
+                <serie>1</serie>
+                <nDPS>157</nDPS>
+                <dCompet>2026-02-18</dCompet>
+                <tpEmit>1</tpEmit>
+                <cLocEmi>4204608</cLocEmi>
+                <prest>
+                    <CNPJ>40248250000160</CNPJ>
+                    <fone>48991069587</fone>
+                    <email>financeiro@ivyapp.com.br</email>
+                    <regTrib>
+                        <opSimpNac>3</opSimpNac>
+                        <regApTribSN>1</regApTribSN>
+                        <regEspTrib>0</regEspTrib>
+                    </regTrib>
+                </prest>
+                <toma>
+                    <CNPJ>20930407000125</CNPJ>
+                    <xNome>J Monteiro Varginha</xNome>
+                    <end>
+                        <endNac>
+                            <cMun>3170701</cMun>
+                            <CEP>37062480</CEP>
+                        </endNac>
+                        <xLgr>Avenida Manuel Diniz</xLgr>
+                        <nro>475</nro>
+                        <xCpl>INDUSTRIAL JK</xCpl>
+                        <xBairro>Industrial JK</xBairro>
+                    </end>
+                    <fone>19997424348</fone>
+                    <email>camila@servicotecnico.com.br</email>
+                </toma>
+                <serv>
+                    <locPrest>
+                        <cLocPrestacao>4204608</cLocPrestacao>
+                    </locPrest>
+                    <cServ>
+                        <cTribNac>010501</cTribNac>
+                        <xDescServ>0105 | 1.05 - Licenciamento ou cessão de direito de uso de programas de computação.</xDescServ>
+                    </cServ>
+                </serv>
+                <valores>
+                    <vServPrest>
+                        <vServ>1050.00</vServ>
+                    </vServPrest>
+                    <trib>
+                        <tribMun>
+                            <tribISSQN>1</tribISSQN>
+                            <tpRetISSQN>1</tpRetISSQN>
+                        </tribMun>
+                        <totTrib>
+                            <vTotTrib>
+                                <vTotTribFed>0.00</vTotTribFed>
+                                <vTotTribEst>0.00</vTotTribEst>
+                                <vTotTribMun>0.00</vTotTribMun>
+                            </vTotTrib>
+                            <pTotTribSN>2.00</pTotTribSN>
+                        </totTrib>
+                    </trib>
+                </valores>
+            </infDPS>
+        </DPS>
+    </infNFSe>
+</NFSe>
