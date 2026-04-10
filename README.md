@@ -22,7 +22,7 @@ Python library for generating Brazilian auxiliary fiscal documents in PDF from X
 | **DACCe** | Documento Auxiliar da Carta de Correção Eletrônica | CC-e |
 | **DACTE** | Documento Auxiliar do Conhecimento de Transporte Eletrônico | CT-e |
 | **DAMDFE** | Documento Auxiliar do Manifesto Eletrônico de Documentos Fiscais | MDF-e |
-| **DAMFSE** | Documento Auxiliar da Nota Fiscal de Serviços Eletrônica | NFS-e |
+| **DANFSE** | Documento Auxiliar da Nota Fiscal de Serviços Eletrônica | NFS-e |
 
 ## Installation
 

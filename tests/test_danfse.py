@@ -17,14 +17,6 @@ def load_danfse(load_xml):
     return _load_danfse
 
 
-@pytest.fixture(scope="module")
-def default_danfse_config(logo_path):
-    config = DanfseConfig(
-        margins=Margins(top=2, right=2, bottom=2, left=2),
-    )
-    return config
-
-
 def test_danfse_default(tmp_path, load_danfse):
     config = DanfseConfig(
         margins=Margins(top=2, right=2, bottom=2, left=2),

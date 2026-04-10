@@ -86,7 +86,7 @@ class Danfse(xFPDF):
         simples_op = {
             "1": "Não Optante",
             "2": "Optante - Microempreendedor Individual (MEI)",
-            "3": "Optante - Microempresa ou Empresa de Pequeno Porte (ME/EPP",
+            "3": "Optante - Microempresa ou Empresa de Pequeno Porte (ME/EPP)",
         }
         simples = simples_op[extract_text(regTrib, "opSimpNac")]
 
@@ -153,8 +153,8 @@ class Danfse(xFPDF):
         total_federal_retentions = 0
 
         if total_retentions:
-            total_federal_retentions = (
-                float(total_retentions) - float(issqn_retained) if issqn_retained else 0
+            total_federal_retentions = float(total_retentions) - float(
+                issqn_retained or 0
             )
             total_federal_retentions = (
                 f"R$ {format_number(total_federal_retentions, precision=2)}"
@@ -224,7 +224,8 @@ class Danfse(xFPDF):
                     f"{format_number(
                         extract_text(valores, 'pAliqAplic'), precision=2
                     )}%"
-                    or "-"
+                    if extract_text(valores, "pAliqAplic")
+                    else "-"
                 ),
                 "issqn_retention": issqn_retention_type[issqn_type],
                 "issqn_cleared": f"R$ {format_number(issqn_value, precision=2)}"
@@ -251,23 +252,32 @@ class Danfse(xFPDF):
                 ),
             },
             "taxes_amount": {
-                "federal_tax": f"R$ {format_number(
-                    extract_text(dps, 'vTotTribFed'), precision=2
-                )}"
-                or "-",
-                "state_tax": f"R$ {format_number(extract_text(
-                    dps, 'vTotTribEst'
-                ), precision=2)}"
-                or "-",
-                "municipal_tax": f"R$ {format_number(extract_text(
-                    dps, 'vTotTribMun'
-                ), precision=2)}"
-                or "-",
+                "federal_tax": (
+                    f"R$ {format_number(
+                        extract_text(dps, 'vTotTribFed'), precision=2
+                    )}"
+                    if extract_text(dps, "vTotTribFed")
+                    else "-"
+                ),
+                "state_tax": (
+                    f"R$ {format_number(
+                        extract_text(dps, 'vTotTribEst'), precision=2
+                    )}"
+                    if extract_text(dps, "vTotTribEst")
+                    else "-"
+                ),
+                "municipal_tax": (
+                    f"R$ {format_number(
+                        extract_text(dps, 'vTotTribMun'), precision=2
+                    )}"
+                    if extract_text(dps, "vTotTribMun")
+                    else "-"
+                ),
             },
         }
 
         toma = dps.find(f"{URL}toma")
-        if toma:
+        if toma is not None:
             data["taker"] = {
                 "id": format_cpf_cnpj(extract_text(toma, "CNPJ"))
                 or format_cpf_cnpj(extract_text(toma, "CPF")),
@@ -292,7 +302,7 @@ class Danfse(xFPDF):
             }
 
         intermed = dps.find(f"{URL}interm")
-        if intermed:
+        if intermed is not None:
             data["intermed"] = {
                 "id": format_cpf_cnpj(extract_text(intermed, "CNPJ"))
                 or format_cpf_cnpj(extract_text(intermed, "CPF")),
@@ -317,7 +327,7 @@ class Danfse(xFPDF):
             }
 
         exigSusp = dps.find(f"{URL}exigSusp")
-        if exigSusp:
+        if exigSusp is not None:
             issqn_suspension_exigibility = {
                 "1": "Exigibilidade do ISSQN Suspensa por Decisão Judicial",
                 "2": "Exigibilidade do ISSQN Suspensa por Processo Administrativo",
@@ -331,11 +341,11 @@ class Danfse(xFPDF):
             )
 
         bm = dps.find(f"{URL}BM")
-        if bm:
+        if bm is not None:
             data["municipal_taxes"]["municipal_benefit"] = extract_text(bm, "nBM")
 
         vDescCondIncond = dps.find(f"{URL}vDescCondIncond")
-        if vDescCondIncond:
+        if vDescCondIncond is not None:
             data["municipal_taxes"]["discount_unconditioned"] = (
                 f"R$ {format_number(extract_text(dps, 'vDescIncond'), precision=2)}"
             )
@@ -347,26 +357,28 @@ class Danfse(xFPDF):
             )
 
         vDedRed = dps.find(f"{URL}vDedRed")
-        if vDedRed:
+        if vDedRed is not None:
             data["municipal_taxes"]["deduct_reduc_amount"] = (
                 f"R$ {format_number(extract_text(dps, 'vDR'), precision=2)}"
             )
 
         tribFed = dps.find(f"{URL}tribFed")
-        if tribFed:
+        if tribFed is not None:
             data["federal_taxes"] = {
                 "irrf": extract_text(tribFed, "vRetIRRF") or "-",
                 "previdenciary_contribution": (
                     f"R$ {format_number(
                         extract_text(tribFed, 'vRetCP'), precision=2
                     )}"
-                    or "-"
+                    if extract_text(tribFed, "vRetCP")
+                    else "-"
                 ),
                 "social_contribution": (
                     f"R$ {format_number(
                         extract_text(tribFed, 'vRetCSLL'), precision=2
                     )}"
-                    or "-"
+                    if extract_text(tribFed, "vRetCSLL")
+                    else "-"
                 ),
                 "social_description": "-",
                 "pis_debit": "-",
@@ -374,18 +386,18 @@ class Danfse(xFPDF):
             }
 
             piscofins = tribFed.find(f"{URL}piscofins")
-            if piscofins:
+            if piscofins is not None:
                 pis = extract_text(piscofins, "vPis")
                 cofins = extract_text(piscofins, "vCofins")
                 pis_cofins_debit = float(pis) + float(cofins)
                 data["federal_taxes"]["pis_debit"] = (
-                    f"R$ {format_number(pis, precision=2)}" or "-"
+                    f"R$ {format_number(pis, precision=2)}"
                 )
                 data["federal_taxes"]["cofins_debit"] = (
-                    f"R$ {format_number(cofins, precision=2)}" or "-"
+                    f"R$ {format_number(cofins, precision=2)}"
                 )
                 data["total_value"]["pis_cofins_debit"] = (
-                    f"R$ {format_number(pis_cofins_debit, precision=2)}" or "-"
+                    f"R$ {format_number(pis_cofins_debit, precision=2)}"
                 )
         else:
             data["federal_taxes"] = {
@@ -398,7 +410,7 @@ class Danfse(xFPDF):
             }
 
         infoCompl = serv.find(f"{URL}infoCompl")
-        if infoCompl:
+        if infoCompl is not None:
             data["complementary_info"] = extract_text(infoCompl, "xInfComp") or "-"
         else:
             data["complementary_info"] = "-"
