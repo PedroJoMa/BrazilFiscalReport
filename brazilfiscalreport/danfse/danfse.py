@@ -157,8 +157,24 @@ class Danfse(xFPDF):
                 issqn_retained or 0
             )
             total_federal_retentions = (
-                f"R$ {format_number(total_federal_retentions, precision=2)}"
+                f"R$ {format_number(total_federal_retentions, self.price_precision)}"
             )
+
+        _bc = format_number(extract_text(valores, "vBC"), self.price_precision)
+        _aliq_val = extract_text(valores, "pAliqAplic")
+        _vserv = format_number(extract_text(dps, "vServ"), self.price_precision)
+        _issqn_ret = format_number(issqn_retained, self.price_precision)
+        _vliq = format_number(extract_text(valores, "vLiq"), self.price_precision)
+        _fed_tax = extract_text(dps, "vTotTribFed")
+        _est_tax = extract_text(dps, "vTotTribEst")
+        _mun_tax = extract_text(dps, "vTotTribMun")
+        _issqn_clear = format_number(issqn_value, self.price_precision)
+        _vdesc_inc = format_number(
+            extract_text(dps, "vDescIncond"), self.price_precision
+        )
+        _vdesc_cond = format_number(
+            extract_text(dps, "vDescCond"), self.price_precision
+        )
 
         data = {
             "environment": extract_text(dps, "tpAmb"),
@@ -209,70 +225,40 @@ class Danfse(xFPDF):
                 "suspension_issqn": "Não",
                 "suspension_number": "-",
                 "municipal_benefit": "-",
-                "service_amount": (
-                    f"R$ {format_number(extract_text(dps, 'vServ'), precision=2)}"
-                ),
+                "service_amount": f"R$ {_vserv}",
                 "discount_unconditioned": "-",
                 "deduct_reduc_amount": "-",
                 "municipal_benefit_math": "-",
-                "calculation_basis": (
-                    f"R$ {format_number(
-                        extract_text(valores, 'vBC'), precision=2
-                    )}"
-                ),
-                "aliq_applied": (
-                    f"{format_number(
-                        extract_text(valores, 'pAliqAplic'), precision=2
-                    )}%"
-                    if extract_text(valores, "pAliqAplic")
-                    else "-"
-                ),
+                "calculation_basis": f"R$ {_bc}",
+                "aliq_applied": f"{format_number(_aliq_val, self.price_precision)}%"
+                if _aliq_val
+                else "-",
                 "issqn_retention": issqn_retention_type[issqn_type],
-                "issqn_cleared": f"R$ {format_number(issqn_value, precision=2)}"
+                "issqn_cleared": f"R$ {_issqn_clear}"
                 if issqn_type == "1"
-                else f"R$ {format_number(0, precision=2)}",
+                else f"R$ {format_number(0, self.price_precision)}",
             },
             "total_value": {
-                "service_amount": f"R$ {
-                    format_number(extract_text(dps, 'vServ'), precision=2)
-                }",
+                "service_amount": f"R$ {_vserv}",
                 "discount_conditioned": "-",
                 "discount_unconditioned": "-",
-                "issqn_retained": f"R$ {
-                    format_number(issqn_retained, precision=2)
-                }",
+                "issqn_retained": f"R$ {_issqn_ret}",
                 "total_federal_retentions": total_federal_retentions
                 if total_federal_retentions
-                else f"R$ {format_number(0, precision=2)}",
+                else f"R$ {format_number(0, self.price_precision)}",
                 "pis_cofins_debit": "-",
-                "net_value": (
-                    f"R$ {format_number(
-                        extract_text(valores, 'vLiq'), precision=2
-                    )}"
-                ),
+                "net_value": f"R$ {_vliq}",
             },
             "taxes_amount": {
-                "federal_tax": (
-                    f"R$ {format_number(
-                        extract_text(dps, 'vTotTribFed'), precision=2
-                    )}"
-                    if extract_text(dps, "vTotTribFed")
-                    else "-"
-                ),
-                "state_tax": (
-                    f"R$ {format_number(
-                        extract_text(dps, 'vTotTribEst'), precision=2
-                    )}"
-                    if extract_text(dps, "vTotTribEst")
-                    else "-"
-                ),
-                "municipal_tax": (
-                    f"R$ {format_number(
-                        extract_text(dps, 'vTotTribMun'), precision=2
-                    )}"
-                    if extract_text(dps, "vTotTribMun")
-                    else "-"
-                ),
+                "federal_tax": f"R$ {format_number(_fed_tax, self.price_precision)}"
+                if _fed_tax
+                else "-",
+                "state_tax": f"R$ {format_number(_est_tax, self.price_precision)}"
+                if _est_tax
+                else "-",
+                "municipal_tax": f"R$ {format_number(_mun_tax, self.price_precision)}"
+                if _mun_tax
+                else "-",
             },
         }
 
@@ -346,39 +332,28 @@ class Danfse(xFPDF):
 
         vDescCondIncond = dps.find(f"{URL}vDescCondIncond")
         if vDescCondIncond is not None:
-            data["municipal_taxes"]["discount_unconditioned"] = (
-                f"R$ {format_number(extract_text(dps, 'vDescIncond'), precision=2)}"
-            )
-            data["total_value"]["discount_conditioned"] = (
-                f"R$ {format_number(extract_text(dps, 'vDescCond'), precision=2)}"
-            )
-            data["total_value"]["discount_unconditioned"] = (
-                f"R$ {format_number(extract_text(dps, 'vDescIncond'), precision=2)}"
-            )
+            data["municipal_taxes"]["discount_unconditioned"] = f"R$ {_vdesc_inc}"
+            data["total_value"]["discount_conditioned"] = f"R$ {_vdesc_cond}"
+
+            data["total_value"]["discount_unconditioned"] = f"R$ {_vdesc_inc}"
 
         vDedRed = dps.find(f"{URL}vDedRed")
         if vDedRed is not None:
             data["municipal_taxes"]["deduct_reduc_amount"] = (
-                f"R$ {format_number(extract_text(dps, 'vDR'), precision=2)}"
+                f"R$ {format_number(extract_text(dps, 'vDR'), self.price_precision)}"
             )
 
         tribFed = dps.find(f"{URL}tribFed")
         if tribFed is not None:
+            _vcp = extract_text(tribFed, "vRetCP") if tribFed else None
+            _csll = extract_text(tribFed, "vRetCSLL") if tribFed else None
             data["federal_taxes"] = {
                 "irrf": extract_text(tribFed, "vRetIRRF") or "-",
                 "previdenciary_contribution": (
-                    f"R$ {format_number(
-                        extract_text(tribFed, 'vRetCP'), precision=2
-                    )}"
-                    if extract_text(tribFed, "vRetCP")
-                    else "-"
+                    f"R$ {format_number(_vcp, self.price_precision)}" if _vcp else "-"
                 ),
                 "social_contribution": (
-                    f"R$ {format_number(
-                        extract_text(tribFed, 'vRetCSLL'), precision=2
-                    )}"
-                    if extract_text(tribFed, "vRetCSLL")
-                    else "-"
+                    f"R$ {format_number(_csll, self.price_precision)}" if _csll else "-"
                 ),
                 "social_description": "-",
                 "pis_debit": "-",
@@ -391,13 +366,13 @@ class Danfse(xFPDF):
                 cofins = extract_text(piscofins, "vCofins")
                 pis_cofins_debit = float(pis) + float(cofins)
                 data["federal_taxes"]["pis_debit"] = (
-                    f"R$ {format_number(pis, precision=2)}"
+                    f"R$ {format_number(pis, self.price_precision)}"
                 )
                 data["federal_taxes"]["cofins_debit"] = (
-                    f"R$ {format_number(cofins, precision=2)}"
+                    f"R$ {format_number(cofins, self.price_precision)}"
                 )
                 data["total_value"]["pis_cofins_debit"] = (
-                    f"R$ {format_number(pis_cofins_debit, precision=2)}"
+                    f"R$ {format_number(pis_cofins_debit, self.price_precision)}"
                 )
         else:
             data["federal_taxes"] = {
