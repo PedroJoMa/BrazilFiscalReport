@@ -57,6 +57,12 @@ class ProductDescriptionConfig:
 
 
 @dataclass
+class FooterStamp:
+    logo: Union[str, BytesIO, bytes] = None
+    text: str = ""
+
+
+@dataclass
 class DanfeConfig:
     logo: Union[str, BytesIO, bytes] = None
     margins: Margins = field(default_factory=Margins)
@@ -72,3 +78,4 @@ class DanfeConfig:
     product_description_config: ProductDescriptionConfig = field(
         default_factory=ProductDescriptionConfig
     )
+    footer_stamp: FooterStamp = field(default_factory=FooterStamp)

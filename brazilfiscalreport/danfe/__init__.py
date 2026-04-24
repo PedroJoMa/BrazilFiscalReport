@@ -3,6 +3,7 @@ from .config import (
     DecimalConfig,
     FontSize,
     FontType,
+    FooterStamp,
     InvoiceDisplay,
     Margins,
     ProductDescriptionConfig,
@@ -20,6 +21,7 @@ __all__ = [
     "InvoiceDisplay",
     "Margins",
     "ProductDescriptionConfig",
+    "FooterStamp",
     "ReceiptPosition",
     "TaxConfiguration",
 ]

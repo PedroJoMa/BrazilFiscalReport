@@ -73,6 +73,7 @@ class Danfe(xFPDF):
         self.infcpl_semicolon_newline = config.infcpl_semicolon_newline
         self.product_description_config = config.product_description_config
         self.watermark_cancelled = config.watermark_cancelled
+        self.footer_stamp = config.footer_stamp
 
         root = ET.fromstring(xml)
         self.inf_nfe = root.find(f"{URL}infNFe")
@@ -207,6 +208,7 @@ class Danfe(xFPDF):
         )
         self._draw_issqn_calculation()
         self._draw_additional_data(addit_data_current_page)
+        self._draw_footer_stamp()
         if self.receipt_pos == ReceiptPosition.BOTTOM:
             self._draw_receipt()
 
@@ -233,6 +235,7 @@ class Danfe(xFPDF):
             self._draw_products(
                 height_product_table, products_for_current_page, p_addit_data
             )
+            self._draw_footer_stamp()
 
         while addit_data_next_pages:
             # At this point, there is no product and service block to include the
@@ -1500,6 +1503,57 @@ class Danfe(xFPDF):
         add_data_lines = add_data_field.get_content_lines()
         max_add_data_lines = add_data_field.get_max_content_lines()
         return add_data_lines, max_add_data_lines
+
+    def _draw_footer_stamp(self):
+        import warnings
+
+        from PIL import Image
+
+        MAX_W = 20
+        MAX_H = 5
+
+        if self.b_margin >= 6:
+            y_base = self.h - self.b_margin + 0.5
+            logo_w, logo_h = 0, 0
+
+            if self.footer_stamp.logo:
+                try:
+                    with Image.open(self.footer_stamp.logo) as img:
+                        orig_w, orig_h = img.size
+
+                    scale = min(MAX_W / orig_w, MAX_H / orig_h)
+                    logo_w = orig_w * scale
+                    logo_h = orig_h * scale
+                except Exception as e:
+                    warnings.warn(
+                        "Não foi possível dimensionar o timbrado do rodapé: " f"{e}",
+                        UserWarning,
+                        stacklevel=2,
+                    )
+
+            x_logo = self.w - self.r_margin - logo_w
+
+            if self.footer_stamp.text:
+                self.set_font(self.default_font, style="B", size=7)
+                text_w = self.get_string_width(self.footer_stamp.text)
+
+                self.set_xy(x_logo - text_w - 2, y_base)
+
+                h_cell = max(logo_h, 4)
+
+                self.cell(text_w, h_cell, self.footer_stamp.text, align="L")
+
+            if logo_w > 0:
+                self.image(
+                    self.footer_stamp.logo, x=x_logo, y=y_base, w=logo_w, h=logo_h
+                )
+        else:
+            warnings.warn(
+                "Margem insuficiente para desenhar o rodapé personalizado. "
+                "Margem inferior necessária: 6",
+                UserWarning,
+                stacklevel=2,
+            )
 
     def _get_dest_end_text(self, ender):
         logradouro = extract_text(ender, "xLgr")

@@ -6,6 +6,7 @@ from brazilfiscalreport.danfe import (
     DecimalConfig,
     FontSize,
     FontType,
+    FooterStamp,
     InvoiceDisplay,
     Margins,
     ProductDescriptionConfig,
@@ -295,4 +296,27 @@ def test_danfe_mei(tmp_path, load_danfe):
     )
     danfe = load_danfe("nfe_mei.xml", config=config)
     pdf_path = get_pdf_output_path("danfe", "danfe_mei")
+    assert_pdf_equal(danfe, pdf_path, tmp_path)
+
+
+def test_danfe_footer_stamp(tmp_path, load_danfe, logo_path):
+    config = DanfeConfig(
+        margins=Margins(top=6, right=6, bottom=6, left=6),
+        product_description_config=ProductDescriptionConfig(
+            display_anvisa=True,
+            display_additional_info=False,
+            display_branch=True,
+            branch_info_prefix="=>",
+            display_anp=True,
+        ),
+        decimal_config=DecimalConfig(
+            price_precision=3,
+            quantity_precision=2,
+        ),
+        font_size=FontSize.BIG,
+        infcpl_semicolon_newline=True,
+        footer_stamp=FooterStamp(logo=logo_path, text="Powered by"),
+    )
+    danfe = load_danfe("nfe_big_font_size.xml", config=config)
+    pdf_path = get_pdf_output_path("danfe", "danfe_footer_stamp")
     assert_pdf_equal(danfe, pdf_path, tmp_path)

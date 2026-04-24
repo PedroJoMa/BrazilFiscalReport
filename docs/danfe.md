@@ -209,6 +209,27 @@ Here is a breakdown of all the configuration options available in `DanfeConfig`:
 
 ---
 
+**Footer Stamp**
+
+- **Type**: `FooterStamp`
+- **Fields**: `logo` (`Union[str, BytesIO, bytes]`), `text` (`str`)
+- **Description**: Displays text and a logo stamped on all pages of the invoice.
+- **Warning**: A bottom margin of at least 6 is required for the stamp to show through.
+- **Example**:
+    ```python
+    config.footer_stamp = FooterStamp(
+        logo="path/to/logo_engere.png",
+        text="Powered By"
+    )
+    ```
+- **Default**:
+    ```python
+    FooterStamp(
+        logo=None,
+        text=""
+    )
+    ```
+
 ### Usage Example with Customization
 
 Here’s how to set up a ``DanfeConfig`` object with a full set of customizations::
@@ -222,6 +243,7 @@ from brazilfiscalreport.danfe import (
     InvoiceDisplay,
     Margins,
     ProductDescriptionConfig,
+    FooterStamp,
     ReceiptPosition,
     TaxConfiguration,
 )
