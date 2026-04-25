@@ -1527,8 +1527,14 @@ class Danfe(xFPDF):
             self.set_font(self.default_font, style="B", size=7)
             text_w = self.get_string_width(stamp.text)
             text_gap = 2 if stamp.logo else 0
-            self.set_xy(x_logo - text_w - text_gap, y_top)
-            self.cell(text_w, stamp.height, stamp.text, align="L")
+            # cell() reserves c_margin padding inside the cell on both sides;
+            # size the cell to include it and right-align so the text right
+            # edge lands exactly at (x_logo - text_gap) without overflowing
+            # the right margin.
+            cell_w = text_w + 2 * self.c_margin
+            cell_x = x_logo - text_gap - text_w - self.c_margin
+            self.set_xy(cell_x, y_top)
+            self.cell(cell_w, stamp.height, stamp.text, align="R")
 
         if stamp.logo:
             self.image(
