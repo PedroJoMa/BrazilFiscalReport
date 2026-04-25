@@ -11,7 +11,10 @@ dynamic = ["version"]
 description = "Python library for generating Brazilian auxiliary fiscal documents in PDF from XML documents."
 authors = [{ name = "Engenere" }]
 keywords = [
-    "nfe", "danfe", "xml", "pdf", "documento", "fiscal", "auxiliar", "converter", "generator", "cce", "dacce", "danfse"
+    "nfe", "nf-e", "danfe", "cte", "ct-e", "dacte", "mdfe", "mdf-e", "damdfe",
+    "cce", "cc-e", "dacce", "nfse", "nfs-e", "danfse",
+    "xml", "pdf", "sefaz", "brazil", "brasil", "nota-fiscal-eletronica",
+    "documento", "fiscal", "auxiliar", "converter", "generator"
 ]
 license = { file = "LICENSE" }
 classifiers = [
