@@ -12,6 +12,8 @@
 
 Python library for generating Brazilian auxiliary fiscal documents in PDF from XML documents.
 
+> Biblioteca Python para gerar **DANFE**, **DACTE**, **DAMDFE**, **DACCe** e **DANFSE** em PDF a partir de XML de NF-e, CT-e, MDF-e, CC-e e NFS-e.
+
 **[Documentation](https://engenere.github.io/BrazilFiscalReport/)** | **[PyPI](https://pypi.org/project/BrazilFiscalReport/)** | **[Try it Online](https://brazilfiscalreport.streamlit.app)**
 
 ## Supported Documents
