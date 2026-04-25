@@ -56,7 +56,14 @@ class Danfe(xFPDF):
         self.set_margins(
             left=config.margins.left, top=config.margins.top, right=config.margins.right
         )
-        self.set_auto_page_break(auto=False, margin=config.margins.bottom)
+        self.footer_stamp = config.footer_stamp
+        self._has_footer_stamp = bool(self.footer_stamp.logo or self.footer_stamp.text)
+        # Reserve space for the footer stamp inside the bottom margin so the
+        # content area (eph) shrinks automatically and never overlaps the stamp.
+        bottom_margin = config.margins.bottom
+        if self._has_footer_stamp:
+            bottom_margin += self.footer_stamp.height + self.footer_stamp.spacing
+        self.set_auto_page_break(auto=False, margin=bottom_margin)
         self.set_title("DANFE")
         self.logo_image = config.logo
         self.receipt_pos = config.receipt_pos
@@ -209,6 +216,7 @@ class Danfe(xFPDF):
         self._draw_additional_data(addit_data_current_page)
         if self.receipt_pos == ReceiptPosition.BOTTOM:
             self._draw_receipt()
+        self._draw_footer_stamp()
 
         # draw next pages, if necessary.
         while products_for_next_pages:
@@ -233,6 +241,7 @@ class Danfe(xFPDF):
             self._draw_products(
                 height_product_table, products_for_current_page, p_addit_data
             )
+            self._draw_footer_stamp()
 
         while addit_data_next_pages:
             # At this point, there is no product and service block to include the
@@ -254,6 +263,7 @@ class Danfe(xFPDF):
             addit_data_next_pages = add_data_lines[max_add_data_lines:]
             addit_data_next_pages = join_char.join(addit_data_next_pages)
             self._draw_additional_data(addit_data_current_page, height_additional_data)
+            self._draw_footer_stamp()
 
     @property
     def edw(self):
@@ -1500,6 +1510,35 @@ class Danfe(xFPDF):
         add_data_lines = add_data_field.get_content_lines()
         max_add_data_lines = add_data_field.get_max_content_lines()
         return add_data_lines, max_add_data_lines
+
+    def _draw_footer_stamp(self):
+        if not self._has_footer_stamp:
+            return
+
+        stamp = self.footer_stamp
+        # Stamp sits in the strip reserved during __init__: just below the
+        # content area, with `stamp.spacing` above and the user's bottom margin
+        # below it as visual padding.
+        y_top = self.h - self.b_margin + stamp.spacing
+        logo_box_w = stamp.logo_max_width if stamp.logo else 0
+        x_logo = self.w - self.r_margin - logo_box_w
+
+        if stamp.text:
+            self.set_font(self.default_font, style="B", size=7)
+            text_w = self.get_string_width(stamp.text)
+            text_gap = 2 if stamp.logo else 0
+            self.set_xy(x_logo - text_w - text_gap, y_top)
+            self.cell(text_w, stamp.height, stamp.text, align="L")
+
+        if stamp.logo:
+            self.image(
+                stamp.logo,
+                x=x_logo,
+                y=y_top,
+                w=logo_box_w,
+                h=stamp.height,
+                keep_aspect_ratio=True,
+            )
 
     def _get_dest_end_text(self, ender):
         logradouro = extract_text(ender, "xLgr")

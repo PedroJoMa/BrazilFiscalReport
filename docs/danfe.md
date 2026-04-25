@@ -209,6 +209,27 @@ Here is a breakdown of all the configuration options available in `DanfeConfig`:
 
 ---
 
+**Footer Stamp**
+
+- **Type**: `FooterStamp`
+- **Fields**:
+    - `logo` (`Optional[Union[str, BytesIO, bytes]]`): logo image; default `None`.
+    - `text` (`str`): text rendered to the left of the logo; default `""`.
+    - `height` (`Number`): vertical area, in mm, reserved for the stamp; default `5`.
+    - `logo_max_width` (`Number`): bounding-box width, in mm, used to fit the logo while preserving aspect ratio; default `20`.
+    - `spacing` (`Number`): vertical gap, in mm, between the content area and the stamp; default `1`.
+- **Description**: Renders a custom stamp (logo + text) on every page of the invoice, right-aligned to the page margin. The stamp area is automatically reserved inside the bottom margin — there is no need to enlarge `Margins.bottom` to make room for it.
+- **Example**:
+    ```python
+    config.footer_stamp = FooterStamp(
+        logo="path/to/logo.png",
+        text="Powered by",
+    )
+    ```
+- **Default**: `FooterStamp()` (empty — nothing is rendered).
+
+---
+
 ### Usage Example with Customization
 
 Here’s how to set up a ``DanfeConfig`` object with a full set of customizations::
@@ -219,6 +240,7 @@ from brazilfiscalreport.danfe import (
     DanfeConfig,
     DecimalConfig,
     FontType,
+    FooterStamp,
     InvoiceDisplay,
     Margins,
     ProductDescriptionConfig,
@@ -246,6 +268,10 @@ config = DanfeConfig(
     product_description_config=ProductDescriptionConfig(
         display_branch=True,
         display_additional_info=True,
+    ),
+    footer_stamp=FooterStamp(
+        logo='path/to/footer_logo.png',
+        text='Powered by',
     ),
 )
 
