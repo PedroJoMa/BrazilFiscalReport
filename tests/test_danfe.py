@@ -1,3 +1,5 @@
+import warnings
+
 import pytest
 
 from brazilfiscalreport.danfe import (
@@ -6,6 +8,7 @@ from brazilfiscalreport.danfe import (
     DecimalConfig,
     FontSize,
     FontType,
+    FooterStamp,
     InvoiceDisplay,
     Margins,
     ProductDescriptionConfig,
@@ -296,3 +299,62 @@ def test_danfe_mei(tmp_path, load_danfe):
     danfe = load_danfe("nfe_mei.xml", config=config)
     pdf_path = get_pdf_output_path("danfe", "danfe_mei")
     assert_pdf_equal(danfe, pdf_path, tmp_path)
+
+
+def test_danfe_footer_stamp(tmp_path, load_danfe, logo_path):
+    config = DanfeConfig(
+        margins=Margins(top=2, right=2, bottom=2, left=2),
+        footer_stamp=FooterStamp(logo=logo_path, text="Powered by"),
+    )
+    danfe = load_danfe("nfe_test_1.xml", config=config)
+    pdf_path = get_pdf_output_path("danfe", "danfe_footer_stamp")
+    assert_pdf_equal(danfe, pdf_path, tmp_path)
+
+
+def test_danfe_footer_stamp_text_only(tmp_path, load_danfe):
+    config = DanfeConfig(
+        margins=Margins(top=2, right=2, bottom=2, left=2),
+        footer_stamp=FooterStamp(text="Powered by Engenere"),
+    )
+    danfe = load_danfe("nfe_test_1.xml", config=config)
+    pdf_path = get_pdf_output_path("danfe", "danfe_footer_stamp_text_only")
+    assert_pdf_equal(danfe, pdf_path, tmp_path)
+
+
+def test_danfe_footer_stamp_logo_only(tmp_path, load_danfe, logo_path):
+    config = DanfeConfig(
+        margins=Margins(top=2, right=2, bottom=2, left=2),
+        footer_stamp=FooterStamp(logo=logo_path),
+    )
+    danfe = load_danfe("nfe_test_1.xml", config=config)
+    pdf_path = get_pdf_output_path("danfe", "danfe_footer_stamp_logo_only")
+    assert_pdf_equal(danfe, pdf_path, tmp_path)
+
+
+def test_danfe_footer_stamp_multipage(tmp_path, load_danfe, logo_path):
+    """
+    Footer stamp must appear on all pages, including continuation pages for
+    products and for additional data.
+    """
+    config = DanfeConfig(
+        margins=Margins(top=2, right=2, bottom=2, left=2),
+        footer_stamp=FooterStamp(logo=logo_path, text="Powered by"),
+    )
+    danfe = load_danfe(
+        "nfe_additional_info_continuation_in_next_page.xml", config=config
+    )
+    pdf_path = get_pdf_output_path("danfe", "danfe_footer_stamp_multipage")
+    assert_pdf_equal(danfe, pdf_path, tmp_path)
+
+
+def test_danfe_default_footer_stamp_emits_no_warning():
+    """
+    A default (empty) FooterStamp must not emit any warning, even when the
+    bottom margin is small.
+    """
+    config = DanfeConfig(margins=Margins(top=2, right=2, bottom=2, left=2))
+    with open("tests/fixtures/danfe/nfe_test_1.xml", encoding="utf8") as f:
+        xml = f.read()
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        Danfe(xml=xml, config=config)
